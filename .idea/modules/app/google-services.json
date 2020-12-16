@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "948250060609",
+    "project_id": "casino-76b06",
+    "storage_bucket": "casino-76b06.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:948250060609:android:eba5ba0552c547d00563c0",
+        "android_client_info": {
+          "package_name": "md.merit.casino"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "948250060609-grvrh44f4915cvdfgkn4405342f9lv7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "md.merit.casino",
+            "certificate_hash": "8c9deceb2a46bd8e47f6de81f00635ed9c5f0408"
+          }
+        },
+        {
+          "client_id": "948250060609-oo035v4kml964ai70m2b7le7as21q4d4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLUWDf5flfcMhAlq8kRv6eQ82X9im7mPg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "948250060609-oo035v4kml964ai70m2b7le7as21q4d4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
