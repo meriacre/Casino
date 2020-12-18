@@ -12,54 +12,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import md.merit.casino.R
+import md.merit.casino.data.RegUser
 
 class RegistrationActivity : AppCompatActivity() {
-
-    lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        auth = FirebaseAuth.getInstance()
+        val regUser = RegUser()
+
 
         btn_register.setOnClickListener {
-            registerUser()
-        }
-    }
-
-    private fun registerUser(){
-        val email = edt_email_reg.text.toString()
-        val pass = edt_pass_reg.text.toString()
-        val pass2 = edt_pass_reg2.text.toString()
-
-        if (email.isNotEmpty() && pass.isNotEmpty() && pass2.isNotEmpty()){
-            if (pass == pass2){
-                CoroutineScope(Dispatchers.IO).launch {
-                   try {
-
-                    auth.createUserWithEmailAndPassword(email, pass).await()
-                    withContext(Dispatchers.Main){
-                        checkLogedinState()
-                    }
-                   }
-                   catch (e:Exception){
-                       withContext(Dispatchers.Main){
-                       Toast.makeText(this@RegistrationActivity, e.message, Toast.LENGTH_SHORT).show()
-                   }}
-                }
-            }
-        }else{
-            Toast.makeText(this, "Please complete all empty inputs!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun checkLogedinState(){
-        if (auth.currentUser == null){
-            Toast.makeText(this, "Please log in!", Toast.LENGTH_SHORT).show()
-        }else{
-            startActivity(Intent(this@RegistrationActivity, MainActivity::class.java))
-            Toast.makeText(this@RegistrationActivity, "You are logged in!", Toast.LENGTH_SHORT).show()
+            regUser.registerUser(this, edt_email_reg, edt_pass_reg, edt_pass_reg2)
         }
     }
 
