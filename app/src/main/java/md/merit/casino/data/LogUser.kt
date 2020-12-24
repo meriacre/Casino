@@ -1,14 +1,22 @@
 package md.merit.casino.data
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import md.merit.casino.models.Money
 import md.merit.casino.ui.MainActivity
 import md.merit.casino.utils.Utils
 
@@ -26,7 +34,19 @@ class LogUser {
                 try {
 
                     auth.signInWithEmailAndPassword(email, pass).await()
+
+                    val db = Firebase.firestore
+                    var money: Money
+                    val authUser = auth.currentUser?.email
+                    val sb = StringBuilder()
+                    val docRef = db.collection("$authUser-money").document("money")
+                    docRef.get().addOnSuccessListener {
+                        money = it.toObject<Money>()!!
+                        sb.append("${money.money}") }.await()
+                    val saveData = SaveData(context)
+                    saveData.setMoney(sb.toString().toInt())
                     withContext(Dispatchers.Main) {
+                        Toast.makeText(context, sb.toString(), Toast.LENGTH_LONG).show()
                         checkLogedinState(context)
                     }
                 } catch (e: Exception) {
@@ -37,6 +57,46 @@ class LogUser {
             }
         } else {
             Toast.makeText(context, "Please complete all empty inputs!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun googleAuthForFirebase(context: Context, account: GoogleSignInAccount) {
+        val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
+        auth = FirebaseAuth.getInstance()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                auth.signInWithCredential(credentials).await()
+                val db = Firebase.firestore
+                var money = Money(1500)
+                val authUser = auth.currentUser?.email
+                val sb = StringBuilder()
+                val docRef = db.collection("$authUser-money").document("money")
+                docRef.get().addOnSuccessListener {
+                    if(it.exists()){
+                        money = it.toObject<Money>()!!
+                        sb.append("${money.money}")
+                        val saveData = SaveData(context)
+                        saveData.setMoney(sb.toString().toInt())
+                    }else {
+                        db.collection("$authUser-money").document("money").set(money)
+                        val saveData = SaveData(context)
+                        saveData.setMoney(1500)
+                    }
+                }.await()
+
+                withContext(Dispatchers.Main) {
+                    Utils.startNewActivity(context, MainActivity::class.java)
+                    Toast.makeText(
+                        context,
+                        "Successfully logged in!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 

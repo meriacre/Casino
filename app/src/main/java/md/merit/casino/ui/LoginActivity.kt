@@ -56,34 +56,15 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+       val logUser = LogUser()
         if (requestCode == REQUIEST_CODE_SIGN_IN) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
             account?.let {
-                googleAuthForFirebase(it)
+              logUser.googleAuthForFirebase(this, it)
             }
         }
     }
-
-    private fun googleAuthForFirebase(account: GoogleSignInAccount) {
-        val credentials = GoogleAuthProvider.getCredential(account.idToken, null)
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                auth.signInWithCredential(credentials).await()
-                withContext(Dispatchers.Main) {
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Successfully logged in!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+    
 
     override fun onStart() {
         super.onStart()
