@@ -9,7 +9,7 @@ import md.merit.casino.data.FirestoreDB
 import md.merit.casino.data.SaveData
 import md.merit.casino.models.Game1
 
-class GameActivity : FragmentActivity() {
+class Game1Activity : FragmentActivity() {
 
     private lateinit var saveData: SaveData
     private lateinit var saveSlotsToFirestore: FirestoreDB

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="md.merit.casino">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
     <meta-data
         android:name="com.google.android.gms.version"
         android:value="@integer/google_play_services_version" />
@@ -13,8 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.NotificationActivity"></activity>
-        <activity android:name=".ui.GameActivity" />
+        <activity android:name=".ui.CryptoGameActivity"></activity>
+        <activity android:name=".ui.NotificationActivity" />
+        <activity android:name=".ui.Game1Activity" />
         <activity android:name=".ui.MainActivity" />
         <activity android:name=".ui.RegistrationActivity" />
         <activity android:name=".ui.LoginActivity">
