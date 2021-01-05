@@ -18,7 +18,8 @@ import md.merit.casino.data.SaveData
 import md.merit.casino.utils.ReminderBrodcast
 
 class MainActivity : AppCompatActivity() {
-    lateinit var auth:FirebaseAuth
+    lateinit var auth: FirebaseAuth
+    lateinit var saveData: SaveData
     private val CHANNNEL_ID = "notifyCasino"
     private val CHANNEL_NAME = "Casino Bonuses"
 
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         auth = FirebaseAuth.getInstance()
+        saveData = SaveData(this)
+        tv_total_money.text = saveData.loadMoney()
 
         createNotificationChannel()
         startNotifications()
@@ -35,17 +38,25 @@ class MainActivity : AppCompatActivity() {
         card_game1.setOnClickListener {
             startActivity(Intent(this, Game1Activity::class.java))
         }
+        card_game2.setOnClickListener {
+            startActivity(Intent(this, Game2Activity::class.java))
+        }
         card_game3.setOnClickListener {
-            startActivity(Intent(this, CryptoGameActivity::class.java))
+            Toast.makeText(this, "in maintenance..", Toast.LENGTH_SHORT).show()
+        }
+        card_game4.setOnClickListener {
+            Toast.makeText(this, "in maintenance..", Toast.LENGTH_SHORT).show()
         }
 
     }
 
     override fun onResume() {
         super.onResume()
-        val saveData = SaveData(this)
-        tv_total_money.text = saveData.loadMoney().toString()
+        saveData = SaveData(this)
+        tv_total_money.text = saveData.loadMoney()
+
     }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
         return true
@@ -54,9 +65,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-           R.id.log_out -> {auth.signOut()
-            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-        }
+            R.id.log_out -> {
+                auth.signOut()
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -75,21 +87,22 @@ class MainActivity : AppCompatActivity() {
         Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 2000)
     }
 
-    private fun createNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNNEL_ID, CHANNEL_NAME, importance).apply {
                 lightColor = Color.GREEN
                 enableLights(true)
             }
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
 
-    private fun startNotifications(){
+    private fun startNotifications() {
         val intent = Intent(this, ReminderBrodcast::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
         val alarmManager: AlarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val currentTime = System.currentTimeMillis()
         val after10Sec = 1000 * 10 * 6 * 20 // Sent notification after 20 min
@@ -98,7 +111,6 @@ class MainActivity : AppCompatActivity() {
         alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + after10Sec, pendingIntent)
         alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + after1Day, pendingIntent)
     }
-
 
 
 }

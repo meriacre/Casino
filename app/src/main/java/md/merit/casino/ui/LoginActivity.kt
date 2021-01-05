@@ -38,7 +38,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btn_login.setOnClickListener {
-           logUser.loginUser(this, edt_login, edt_password)
+            logUser.loginUser(this, edt_login, edt_password)
         }
 
         btn_connect_google.setOnClickListener {
@@ -56,15 +56,15 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-       val logUser = LogUser()
+        val logUser = LogUser()
         if (requestCode == REQUIEST_CODE_SIGN_IN) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(data).result
             account?.let {
-              logUser.googleAuthForFirebase(this, it)
+                logUser.googleAuthForFirebase(this, it)
             }
         }
     }
-    
+
 
     override fun onStart() {
         super.onStart()

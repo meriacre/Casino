@@ -24,7 +24,7 @@ class LogUser {
 
     lateinit var auth: FirebaseAuth
 
-    fun loginUser(context:Context,login:EditText,password:EditText) {
+    fun loginUser(context: Context, login: EditText, password: EditText) {
         val email = login.text.toString()
         val pass = password.text.toString()
         auth = FirebaseAuth.getInstance()
@@ -42,9 +42,10 @@ class LogUser {
                     val docRef = db.collection("$authUser-money").document("money")
                     docRef.get().addOnSuccessListener {
                         money = it.toObject<Money>()!!
-                        sb.append("${money.money}") }.await()
+                        sb.append("${money.money}")
+                    }.await()
                     val saveData = SaveData(context)
-                    saveData.setMoney(sb.toString().toInt())
+                    saveData.setMoney(sb.toString())
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, sb.toString(), Toast.LENGTH_LONG).show()
                         checkLogedinState(context)
@@ -67,20 +68,20 @@ class LogUser {
             try {
                 auth.signInWithCredential(credentials).await()
                 val db = Firebase.firestore
-                var money = Money(1500)
+                var money = Money("10000")
                 val authUser = auth.currentUser?.email
                 val sb = StringBuilder()
                 val docRef = db.collection("$authUser-money").document("money")
                 docRef.get().addOnSuccessListener {
-                    if(it.exists()){
+                    if (it.exists()) {
                         money = it.toObject<Money>()!!
                         sb.append("${money.money}")
                         val saveData = SaveData(context)
-                        saveData.setMoney(sb.toString().toInt())
-                    }else {
+                        saveData.setMoney(sb.toString())
+                    } else {
                         db.collection("$authUser-money").document("money").set(money)
                         val saveData = SaveData(context)
-                        saveData.setMoney(1500)
+                        saveData.setMoney("10000")
                     }
                 }.await()
 

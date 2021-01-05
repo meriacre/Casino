@@ -1,60 +1,193 @@
 package md.merit.casino.ui.fragments
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_game2.*
+import kotlinx.android.synthetic.main.fragment_display_crypto.*
 import md.merit.casino.R
+import md.merit.casino.data.FirestoreDB
+import md.merit.casino.data.SaveData
+import md.merit.casino.models.Trade
+import md.merit.casino.utils.Common
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class DisplayCryptoFragment : Fragment(R.layout.fragment_display_crypto) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DisplayCryptoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class DisplayCryptoFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    var fire: FirestoreDB = FirestoreDB()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val name = arguments?.getString("rname")
+        val price = arguments?.getString("rprice")
+        val hour1 = arguments?.getString("r1hour")
+        val hour24 = arguments?.getString("r24hour")
+        val day7 = arguments?.getString("r7day")
+        val id = arguments?.getString("rId")
+        this.activity?.let { fire.getSharesNumber(it, name!!, tv_coin_shares) }
+        tv_name_display.text = name
+        tv_price_display.text = price
+        tv_1h_display.text = hour1
+        tv_1h_display.setTextColor(
+            if (hour1!!.contains("-"))
+                Color.parseColor("#FF0000")
+            else
+                Color.parseColor("#32CD32")
+        )
+        tv_24h.text = hour24
+        tv_24h.setTextColor(
+            if (hour24!!.contains("-"))
+                Color.parseColor("#FF0000")
+            else
+                Color.parseColor("#32CD32")
+        )
+        tv_7day.text = day7
+        tv_7day.setTextColor(
+            if (day7!!.contains("-"))
+                Color.parseColor("#FF0000")
+            else
+                Color.parseColor("#32CD32")
+        )
+
+        Picasso.with(activity?.baseContext)
+            .load(
+                StringBuilder(Common.imageUrl3)
+                    .append(id)
+                    .append(".png")
+                    .toString()
+            )
+            .into(img_logo)
+
+        btn_buy.setOnClickListener {
+            val inflater = LayoutInflater.from(this.activity)
+            val view = inflater.inflate(R.layout.buy_layout, null)
+            val pricePerShare = view.findViewById<TextView>(R.id.tv_price_share)
+            val shares = view.findViewById<TextView>(R.id.edt_shares)
+            pricePerShare.text = price
+
+
+            val alertDialog = AlertDialog.Builder(this.activity)
+                .setTitle("Buy $name")
+                .setMessage("How many $name do you wanna buy?")
+                .setView((view))
+                .setPositiveButton("Buy", DialogInterface.OnClickListener { dialogInterface, i ->
+                    if (shares.text.isNotEmpty() && shares.text.toString().toInt() > 0) {
+                        val pret = price?.toDoubleOrNull()?.times(shares.text.toString().toDouble())
+                        val alert2 = AlertDialog.Builder(this.activity)
+                            .setTitle("Total")
+                            .setMessage("Are you sure you want to buy ${shares.text} $name for total price of $pret?")
+                            .setPositiveButton(
+                                "Yes",
+                                DialogInterface.OnClickListener { dialogInterface, i ->
+                                    val trade = Trade(name!!, shares.text.toString().toInt())
+                                    this.activity?.let { it1 -> fire.saveTrade(it1, name, trade) }
+                                    val saveData = context?.let { it1 -> SaveData(it1) }
+                                    var totalMoney = saveData?.loadMoney()?.toDouble()
+                                    totalMoney = totalMoney!! - pret!!
+                                    saveData?.setMoney(totalMoney.toString())
+                                    val tv =
+                                        getActivity()?.findViewById<TextView>(R.id.tv_total_money_game2)
+                                    tv?.text = saveData?.loadMoney()
+                                })
+                            .setNegativeButton(
+                                "No",
+                                DialogInterface.OnClickListener { dialogInterface, i ->
+
+                                })
+                            .create()
+                            .show()
+                    } else {
+                        Toast.makeText(this.activity, "You can't buy 0 shares!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialogInterface, i ->
+
+                })
+            val alert = alertDialog.create()
+            alert.show()
+        }
+
+        btn_sell.setOnClickListener {
+            val inflater = LayoutInflater.from(this.activity)
+            val view = inflater.inflate(R.layout.buy_layout, null)
+            val pricePerShare = view.findViewById<TextView>(R.id.tv_price_share)
+            val shares = view.findViewById<TextView>(R.id.edt_shares)
+            pricePerShare.text = price
+
+            if (tv_coin_shares.text.toString().toInt() > 0) {
+
+                val alertDialog = AlertDialog.Builder(this.activity)
+                    .setTitle("Buy $name")
+                    .setMessage("How many $name do you wanna sell?")
+                    .setView((view))
+                    .setPositiveButton(
+                        "Sell",
+                        DialogInterface.OnClickListener { dialogInterface, i ->
+                            if (shares.text.isNotEmpty() && shares.text.toString().toInt() > 0) {
+                                val pret = price?.toDoubleOrNull()
+                                    ?.times(shares.text.toString().toDouble())
+                                val alert2 = AlertDialog.Builder(this.activity)
+                                    .setTitle("Total")
+                                    .setMessage("Are you sure you want to sell ${shares.text} $name for total price of $pret?")
+                                    .setPositiveButton(
+                                        "Yes",
+                                        DialogInterface.OnClickListener { dialogInterface, i ->
+                                            val trade =
+                                                Trade(name!!, shares.text.toString().toInt())
+                                            this.activity?.let { it1 ->
+                                                fire.sellTrade(
+                                                    it1,
+                                                    name,
+                                                    trade
+                                                )
+                                            }
+                                            val saveData = context?.let { it1 -> SaveData(it1) }
+                                            var totalMoney = saveData?.loadMoney()?.toDouble()
+                                            totalMoney = totalMoney!! + pret!!
+                                            saveData?.setMoney(totalMoney.toString())
+                                            val tv =
+                                                getActivity()?.findViewById<TextView>(R.id.tv_total_money_game2)
+                                            tv?.text = saveData?.loadMoney()
+                                        })
+                                    .setNegativeButton(
+                                        "No",
+                                        DialogInterface.OnClickListener { dialogInterface, i ->
+
+                                        })
+                                    .create()
+                                    .show()
+                            } else {
+                                Toast.makeText(
+                                    this.activity,
+                                    "You can't sell 0 shares!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        })
+                    .setNegativeButton(
+                        "Cancel",
+                        DialogInterface.OnClickListener { dialogInterface, i ->
+
+                        })
+                val alert = alertDialog.create()
+                alert.show()
+            } else {
+                Toast.makeText(this.activity, "You don't have shares to sell!", Toast.LENGTH_SHORT)
+                    .show()
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_display_crypto, container, false)
-    }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DisplayCryptoFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DisplayCryptoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

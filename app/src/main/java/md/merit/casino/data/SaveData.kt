@@ -1,4 +1,5 @@
 package md.merit.casino.data
+
 import android.content.Context
 import android.content.SharedPreferences
 
@@ -7,14 +8,15 @@ class SaveData(context: Context) {
     private var sharedPreferences: SharedPreferences =
         context.getSharedPreferences("file", Context.MODE_PRIVATE)
 
-    fun setMoney(totalMoney: Int) {
+    fun setMoney(totalMoney: String) {
         val editor = sharedPreferences.edit()
-        editor.putInt("Money", totalMoney)
+        editor.putString("Money", totalMoney)
         editor.apply()
     }
 
-    fun loadMoney(): Int {
-        val totalMoney = sharedPreferences.getInt("Money", 1500)
+    fun loadMoney(): String? {
+        val totalMoney = sharedPreferences.getString("Money", "10000")
         return (totalMoney)
     }
+
 }

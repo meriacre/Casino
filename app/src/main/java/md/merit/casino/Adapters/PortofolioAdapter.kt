@@ -1,79 +1,44 @@
 package md.merit.casino.Adapters
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.text.TextUtils.replace
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.coin_layout.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import md.merit.casino.R
-import md.merit.casino.data.LoadMore
+import md.merit.casino.data.FirestoreDB
 import md.merit.casino.models.CoinModell.Data
 import md.merit.casino.ui.Game2Activity
-import md.merit.casino.ui.fragments.BaseFragment
 import md.merit.casino.ui.fragments.DisplayCryptoFragment
 import md.merit.casino.utils.Common
 
-class CoinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    var coinIcon = itemView.coinIcon
-    var coinSymbol = itemView.coin_symbol
-    var coinName = itemView.coin_name
-    var coinPrice = itemView.priceUsd
-    var oneHourChange = itemView.oneHour
-    var twentyFourChange = itemView.twentyFourHour
-    var sevenDayChange = itemView.sevenDays
-}
 
-class CoinAdapter(
-    recyclerView: RecyclerView,
-    internal var activity: Activity,
-    var items: List<Data>
-) : RecyclerView.Adapter<CoinViewHolder>() {
+class PortofolioAdapter(private var items: List<Data>, internal var activity: Activity) :
+    RecyclerView.Adapter<PortofolioAdapter.MyViewHolder>() {
 
-    internal var loadMore: LoadMore? = null
-    var isLoading: Boolean = false
-    var visibleThreshold = 5
-    var lastVisibleItem: Int = 0
-    var totalItemCount: Int = 0
-
-    init {
-        val linearLayout = recyclerView.layoutManager as LinearLayoutManager
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                totalItemCount = linearLayout.itemCount
-                lastVisibleItem = linearLayout.findLastVisibleItemPosition()
-                if (!isLoading && totalItemCount <= lastVisibleItem + visibleThreshold) {
-                    if (loadMore != null)
-                        loadMore!!.onLoadMore()
-                    isLoading = true
-                }
-            }
-        })
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var coinIcon = itemView.coinIcon
+        var coinSymbol = itemView.coin_symbol
+        var coinName = itemView.coin_name
+        var coinPrice = itemView.priceUsd
+        var oneHourChange = itemView.oneHour
+        var twentyFourChange = itemView.twentyFourHour
+        var sevenDayChange = itemView.sevenDays
     }
 
-    fun setLoadMore(loadMore: LoadMore) {
-        this.loadMore = loadMore
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val item = LayoutInflater.from(parent.context).inflate(R.layout.coin_layout, parent, false)
+        return MyViewHolder(item)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinViewHolder {
-        val view = LayoutInflater.from(activity)
-            .inflate(R.layout.coin_layout, parent, false)
-        return CoinViewHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
-    override fun onBindViewHolder(holder: CoinViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val coin = items[position]
 
         holder.coinName.text = coin.name
@@ -87,9 +52,9 @@ class CoinAdapter(
             val gItem = items[position]
             val gname = gItem.name
             val gprice = gItem.quote.USD.price
-            val g1hour = gItem.quote.USD.percent_change_1h
-            val g24hour = gItem.quote.USD.percent_change_24h
-            val g7day = gItem.quote.USD.percent_change_7d
+            val g1hour = gItem.quote.USD.percent_change_1h + "%"
+            val g24hour = gItem.quote.USD.percent_change_24h + "%"
+            val g7day = gItem.quote.USD.percent_change_7d + "%"
             val gid = gItem.id.toString()
 
             val bundle = Bundle()
@@ -140,17 +105,13 @@ class CoinAdapter(
             else
                 Color.parseColor("#32CD32")
         )
-
     }
 
-    fun setLoaded() {
-        isLoading = false
-    }
+    override fun getItemCount(): Int = items.size
 
     fun updateData(coinModels: List<Data>) {
         this.items = coinModels
         notifyDataSetChanged()
     }
-
-
 }
+

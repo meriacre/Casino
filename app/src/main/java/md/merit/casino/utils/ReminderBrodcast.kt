@@ -10,7 +10,7 @@ import androidx.core.app.NotificationManagerCompat
 import md.merit.casino.R
 import md.merit.casino.ui.NotificationActivity
 
-class ReminderBrodcast: BroadcastReceiver() {
+class ReminderBrodcast : BroadcastReceiver() {
 
     override fun onReceive(p0: Context, p1: Intent?) {
 
@@ -19,14 +19,14 @@ class ReminderBrodcast: BroadcastReceiver() {
             addNextIntentWithParentStack(intent)
             getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
         }
-        val builder = NotificationCompat.Builder(p0 , "notifyCasino")
-        .setSmallIcon(R.drawable.fig1)
+        val builder = NotificationCompat.Builder(p0, "notifyCasino")
+            .setSmallIcon(R.drawable.fig1)
             .setContentTitle("Casino Bonus")
             .setContentText("Click here to take your bonus!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(p0)
-        notificationManager.notify(200,builder.build())
+        notificationManager.notify(200, builder.build())
     }
 }

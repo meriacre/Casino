@@ -18,7 +18,7 @@ class NotificationActivity : AppCompatActivity() {
         saveData = SaveData(this)
         auth = FirebaseAuth.getInstance()
         if (auth.currentUser == null)
-            startActivity(Intent(this,LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
 
         tv_total_money_notif1.text = saveData.loadMoney().toString()
         tv_total_money_notif2.text = (saveData.loadMoney().plus(1000)).toString()
@@ -29,7 +29,7 @@ class NotificationActivity : AppCompatActivity() {
         }
     }
 
-    private fun bonusMoney(){
+    private fun bonusMoney() {
         val money = saveData.loadMoney().plus(1000)
         saveData.setMoney(money)
     }
