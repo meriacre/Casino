@@ -42,7 +42,7 @@ class Game1Activity : FragmentActivity() {
 
         btn_add_bid.setOnClickListener {
             var bidul = tv_bid.text.toString().toInt()
-            if (bidul <= tv_total_money_game1.text.toString().toInt()) {
+            if (bidul <= tv_total_money_game1.text.toString().toDouble()) {
                 bidul = bidul + 20
             }
             tv_bid.text = bidul.toString()

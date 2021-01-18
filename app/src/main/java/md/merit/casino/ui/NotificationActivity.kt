@@ -21,7 +21,7 @@ class NotificationActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
 
         tv_total_money_notif1.text = saveData.loadMoney().toString()
-        tv_total_money_notif2.text = (saveData.loadMoney().plus(1000)).toString()
+        tv_total_money_notif2.text = (saveData.loadMoney()?.toDouble()?.plus(1000)).toString()
 
         btn_bonus_money.setOnClickListener {
             bonusMoney()
@@ -30,7 +30,7 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun bonusMoney() {
-        val money = saveData.loadMoney().plus(1000)
-        saveData.setMoney(money)
+        val money = saveData.loadMoney()?.toDouble()?.plus(1000)
+        saveData.setMoney(money.toString())
     }
 }

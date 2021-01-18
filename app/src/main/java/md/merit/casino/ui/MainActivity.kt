@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNNEL_ID, CHANNEL_NAME, importance).apply {
                 lightColor = Color.GREEN
                 enableLights(true)
@@ -106,10 +106,10 @@ class MainActivity : AppCompatActivity() {
         val alarmManager: AlarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val currentTime = System.currentTimeMillis()
         val after10Sec = 1000 * 10 * 6 * 20 // Sent notification after 20 min
-        val after1Day = 1000 * 60 * 60 * 24 // Sent notification after 1 day
+       // val after1Day = 1000 * 60 * 60 * 24 // Sent notification after 1 day
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + after10Sec, pendingIntent)
-        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + after1Day, pendingIntent)
+       // alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + after1Day, pendingIntent)
     }
 
 

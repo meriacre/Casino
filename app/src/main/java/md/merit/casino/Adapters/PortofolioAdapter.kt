@@ -56,6 +56,12 @@ class PortofolioAdapter(private var items: List<Data>, internal var activity: Ac
             val g24hour = gItem.quote.USD.percent_change_24h + "%"
             val g7day = gItem.quote.USD.percent_change_7d + "%"
             val gid = gItem.id.toString()
+            val grank = gItem.cmc_rank.toString()
+            val gmarketCap = gItem.quote.USD.market_cap
+            val gvolume24h = gItem.quote.USD.volume_24h
+            val gcircSup = gItem.circulating_supply
+            val gmaxSup = gItem.max_supply
+            val gtotalSup = gItem.total_supply
 
             val bundle = Bundle()
             bundle.putString("rname", gname)
@@ -64,6 +70,13 @@ class PortofolioAdapter(private var items: List<Data>, internal var activity: Ac
             bundle.putString("r24hour", g24hour)
             bundle.putString("r7day", g7day)
             bundle.putString("rId", gid)
+            bundle.putString("rRank", grank)
+            bundle.putString("rMarketCap", gmarketCap)
+            bundle.putString("rVolume24h", gvolume24h)
+            bundle.putString("rCircultionSupply", gcircSup)
+            bundle.putString("rMaximSupply", gmaxSup)
+            bundle.putString("rTotalSupply", gtotalSup)
+
             val fragmentDisplay = DisplayCryptoFragment()
             fragmentDisplay.arguments = bundle
 

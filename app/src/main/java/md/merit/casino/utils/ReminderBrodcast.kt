@@ -23,8 +23,9 @@ class ReminderBrodcast : BroadcastReceiver() {
             .setSmallIcon(R.drawable.fig1)
             .setContentTitle("Casino Bonus")
             .setContentText("Click here to take your bonus!")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
 
         val notificationManager = NotificationManagerCompat.from(p0)
         notificationManager.notify(200, builder.build())

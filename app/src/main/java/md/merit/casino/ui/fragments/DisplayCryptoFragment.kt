@@ -34,10 +34,23 @@ class DisplayCryptoFragment : Fragment(R.layout.fragment_display_crypto) {
         val hour24 = arguments?.getString("r24hour")
         val day7 = arguments?.getString("r7day")
         val id = arguments?.getString("rId")
+        val rank = arguments?.getString("rRank")
+        val markCap = arguments?.getString("rMarketCap")
+        val volume24h = arguments?.getString("rVolume24h")
+        val circSupply = arguments?.getString("rCircultionSupply")
+        val maxSupply = arguments?.getString("rMaximSupply")
+        val totalSupply = arguments?.getString("rTotalSupply")
+
         this.activity?.let { fire.getSharesNumber(it, name!!, tv_coin_shares) }
         tv_name_display.text = name
         tv_price_display.text = price
         tv_1h_display.text = hour1
+        tv_cmc_rank.text = rank
+        tv_markey_cap.text = markCap
+        tv_volume_24h.text = volume24h
+        tv_circ_supply.text = circSupply
+        tv_max_supply.text = maxSupply
+        tv_total_supply.text = totalSupply
         tv_1h_display.setTextColor(
             if (hour1!!.contains("-"))
                 Color.parseColor("#FF0000")

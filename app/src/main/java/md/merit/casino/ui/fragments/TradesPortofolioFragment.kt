@@ -28,8 +28,8 @@ class TradesPortofolioFragment : Fragment(R.layout.fragment_portofolio) {
         names = context?.let { fire.getTrades(it) }!!
         fetchJson()
         if (listaNoua.isEmpty()) {
-            Toast.makeText(this.activity, "You dont have any trades yet..", Toast.LENGTH_LONG)
-                .show()
+            //Toast.makeText(this.activity, "You dont have any trades yet..", Toast.LENGTH_LONG)
+            //    .show()
         }
         rv_portofolio_coins.layoutManager = LinearLayoutManager(this.context)
         adapter = PortofolioAdapter(listaNoua, this.requireActivity())
