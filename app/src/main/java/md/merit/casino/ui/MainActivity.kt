@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         auth = FirebaseAuth.getInstance()
         saveData = SaveData(this)
-        tv_total_money.text = saveData.loadMoney()
+        tv_total_money.text = saveData.loadMoney().toString()
 
         createNotificationChannel()
         startNotifications()

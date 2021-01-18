@@ -47,7 +47,7 @@ class LogUser {
                     val saveData = SaveData(context)
                     saveData.setMoney(sb.toString())
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, sb.toString(), Toast.LENGTH_LONG).show()
+                       // Toast.makeText(context, sb.toString(), Toast.LENGTH_LONG).show()
                         checkLogedinState(context)
                     }
                 } catch (e: Exception) {
